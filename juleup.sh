@@ -205,6 +205,10 @@ case "${COPT:-help}" in
 							echo "PATH=\"\${PATH}:${JULE_DIR}/bin\"" >> "${HOME}/.bashrc"
 							echo "added to path, please source again your .bashrc file or start new bash session."
 						;;
+						"sh")
+							echo "PATH=\"\${PATH}:${JULE_DIR}/bin\"" >> "${HOME}/.profile"
+							echo "added to path, please source again your .profile file or start new sh session."
+						;;
 					esac
 				  ;;
 				esac
