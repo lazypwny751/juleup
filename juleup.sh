@@ -34,7 +34,7 @@ do
 			export HELP="true"
 		;;
 		"v")
-			export VERBOSE="$(( ${VERBOSE} + 1 ))"
+			export VERBOSE="$(( VERBOSE + 1 ))"
 		;;
 		"c")
 			export CLEAN="true"
@@ -213,6 +213,94 @@ case "${COPT:-help}" in
 			fi
 		else
 			die "you have unresolved packages, please install that dependencies."
+		fi
+	;;
+	"default"|"current"|"info")
+		if [ -f "${JULE_DIR}/default" ]
+		then
+			unset RELEASE PLATFORM ARCH
+
+			# shellcheck disable=SC1091
+			. "${JULE_DIR}/default"
+			printf "default JuleC v%s on %s-%s.\n" "${RELEASE}" "${PLATFORM}" "${ARCH}"
+		else
+			die "default file doesn't exists, you're trying to use wrong path or you haven't make the setup(you can try \"${0##*/} up\")."
+		fi
+	;;
+	"list"|"available")
+		# check dependencies.
+		export NEXT="true"
+
+		if ! command -v uname > /dev/null; then
+			export NEXT="false"
+		fi
+
+		# Architecture.
+		if [ -z "${ARCH}" ]
+		then
+			case "$(uname -m)" in
+				"x86_64"|"amd64")
+					export ARCH="amd64"
+				;;
+				"aarch64")
+					export ARCH="arm64"
+				;;
+			esac
+		fi
+
+		# Platform.
+		if [ -z "${PLATFORM}" ]
+		then
+			case "$(uname)" in
+				"Linux")
+					export PLATFORM="linux"
+				;;
+			esac
+		fi
+
+		if "${NEXT:-false}"
+		then
+			export JCDIR="${JULE_DIR}/julec/${PLATFORM}"
+			if [ -d "${JCDIR}" ]
+			then
+				for i in "${JCDIR}/"*
+				do
+					echo "${i##*/}"
+				done
+			else
+				echo "no compilers found for ${PLATFORM:-unknown}."
+			fi
+		fi
+	;;
+	"set")
+		# check dependencies.
+		export NEXT="true"
+
+		if ! command -v uname > /dev/null; then
+			export NEXT="false"
+		fi
+
+		# Architecture.
+		if [ -z "${ARCH}" ]
+		then
+			case "$(uname -m)" in
+				"x86_64"|"amd64")
+					export ARCH="amd64"
+				;;
+				"aarch64")
+					export ARCH="arm64"
+				;;
+			esac
+		fi
+
+		# Platform.
+		if [ -z "${PLATFORM}" ]
+		then
+			case "$(uname)" in
+				"Linux")
+					export PLATFORM="linux"
+				;;
+			esac
 		fi
 	;;
 	"version")
