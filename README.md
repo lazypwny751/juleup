@@ -22,9 +22,9 @@
 Clone this repository and make the script executable:
 
 ```sh
-git clone https://github.com/yourname/juleup.git
+git clone https://github.com/lazypwny751/juleup.git
 cd juleup
-chmod +x juleup.sh
+chmod u+x juleup.sh
 ```
 
 (Optionally move it to your `$PATH` for global usage:)
