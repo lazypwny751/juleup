@@ -1,1 +1,24 @@
-# very soon.
+name: juleup CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  get-juleup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt install -y --no-install-recommends clang-19 curl unzip coreutils
+          sudo ln -sf /usr/bin/clang++-19 /usr/bin/clang++
+
+      - name: Exec juleup.sh get
+        run: sh juleup.sh get
