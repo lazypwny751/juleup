@@ -14,6 +14,9 @@ die() {
 while getopts ":d:r:hv" opt
 do
 	case "${opt}" in
+		"p")
+			export PLATFORM="${OPTARG}"
+		;;
 		"d")
 			export JULE_DIR="${OPTARG}"
 		;;
@@ -48,13 +51,22 @@ case "${COPT:-help}" in
 		export NEXT="true"
 
 		# check dependencies.
-		for c in "unzip" "curl"
+		for c in "unzip" "curl" "uname"
 		do
 			if ! command -vV "${c}"
 			then
 				export NEXT="false"
 			fi
 		done
+
+		if [ -z "${PLATFORM}" ]
+		then
+			case "$(uname)" in
+				"Linux")
+					export PLATFORM="linux"
+				;;
+			esac
+		fi
 
 		if "${NEXT}"
 		then
