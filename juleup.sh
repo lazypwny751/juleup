@@ -57,7 +57,7 @@ then
 fi
 
 case "${COPT:-help}" in
-	"get"|"install"|"update"|"up")
+	"get"|"install"|"up")
 		export NEXT="true"
 
 		# check dependencies.
@@ -187,10 +187,10 @@ case "${COPT:-help}" in
 				# So close, set up if default compiler never exists.
 				if [ ! -f "${JULE_DIR}/default" ]
 				then
-					printf "RELEASE=\"%s\"\nPLATFORM=\"%s\"\nARCH=\"%s\"\n" "${RELEASE}" "${PLATFORM}" "${ARCH}" > "${JULE_DIR}/default"
 					[ ! -d "${JULE_DIR}/bin" ] && mkdir "${JULE_DIR}/bin"
 					[ -f "${JULE_DIR}/bin/julec" ] && rm -rf "${JULE_DIR}/bin/julec"
 					ln -s "${JCD}/bin/julec_dev" "${JULE_DIR}/bin/julec"
+					printf "RELEASE=\"%s\"\nPLATFORM=\"%s\"\nARCH=\"%s\"\n" "${RELEASE}" "${PLATFORM}" "${ARCH}" > "${JULE_DIR}/default"
 					echo "now JuleC v${RELEASE} is the default compiler."
 				fi
 
@@ -276,9 +276,14 @@ case "${COPT:-help}" in
 		# check dependencies.
 		export NEXT="true"
 
-		if ! command -v uname > /dev/null; then
-			export NEXT="false"
-		fi
+		# set the nev linker.
+		for c in "uname" "ln" "rm" "mkdir"
+		do
+			if ! command -vV "${c}"
+			then
+				export NEXT="false"
+			fi
+		done
 
 		# Architecture.
 		if [ -z "${ARCH}" ]
@@ -302,13 +307,40 @@ case "${COPT:-help}" in
 				;;
 			esac
 		fi
+
+		# set the new compiler if exist's.
+		if [ -f "${JULE_DIR}/julec/${PLATFORM}/julec-${ARCH}v${RELEASE}/bin/julec_dev" ]
+		then
+			[ ! -d "${JULE_DIR}/bin" ] && mkdir "${JULE_DIR}/bin"
+			[ -f "${JULE_DIR}/bin/julec" ] && rm "${JULE_DIR}/bin/julec"
+			ln -s "${JULE_DIR}/julec/${PLATFORM}/julec-${ARCH}v${RELEASE}/bin/julec_dev" "${JULE_DIR}/bin/julec"
+			printf "RELEASE=\"%s\"\nPLATFORM=\"%s\"\nARCH=\"%s\"\n" "${RELEASE}" "${PLATFORM}" "${ARCH}" > "${JULE_DIR}/default"
+			echo "now JuleC v${RELEASE} is the default compiler."
+		else
+			die "you haven't installed ${RELEASE} for ${PLATFORM} yet."
+		fi
 	;;
 	"version")
 		echo "${VER}"
 	;;
 	*)
 		! "${HELP}" && echo "error: \"${COMM:-unknown}\" is an unknown option."
-		printf "An Elegant Jule toolchain installer %s:\n\tversion: print's current juleup version.\n\t-h: get this helper text.\n" "${0##*/}"
+		printf "%s - An Elegant Jule toolchain installer\n" "${0##*/}"
+		printf "Usage:\n"
+		printf "  %s <command> [options]\n\n" "${0##*/}"
+		printf "Commands:\n"
+		printf "  version           Show the current juleup version.\n"
+		printf "  list              List installed toolchains.\n"
+		printf "  set               Set the default compiler (optional: -a -p -r).\n"
+		printf "  get               Download and configure a compiler (optional: -a -p -r).\n\n"
+		printf "Options:\n"
+		printf "  -a <arch>         Specify architecture (e.g., x86_64, aarch64).\n"
+		printf "  -p <platform>     Specify platform (e.g., linux, windows).\n"
+		printf "  -d <dir>          Specify installation directory.\n"
+		printf "  -r <release>      Specify release version (e.g., stable, nightly).\n"
+		printf "  -c                Clean setup. Removes existing compiler before setup.\n"
+		printf "  -v                Enable verbose output.\n"
+		printf "  -h                Show this help message.\n"
 		! "${HELP}" && exit 1
 	;;
 esac
