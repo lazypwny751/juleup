@@ -16,7 +16,7 @@ jobs:
 
       - name: Install required packages
         run: |
-          sudo apt-get update
+          sudo apt update
           sudo apt install -y --no-install-recommends clang-19 curl unzip coreutils
           sudo ln -sf /usr/bin/clang++-19 /usr/bin/clang++
 
