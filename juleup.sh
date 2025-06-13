@@ -4,10 +4,11 @@ set -e
 
 export VER="1" HELP="false"
 
-# $JULE_DIR/julec <- compilers goes here.
-# $JULE_DIR/jpkg  <- jpkg releases goes here.
-# $JULE_DIR/bin   <- binaries goes here. 
-# $JULE_DIR/pkg   <- global package's goes here.
+# $JULE_DIR/julec/  <- compilers goes here.
+# $JULE_DIR/jpkg/   <- jpkg releases goes here.
+# $JULE_DIR/bin/    <- binaries goes here. 
+# $JULE_DIR/pkg/    <- global package's goes here.
+# $JULE_DIR/default <- default compiler information.
 
 die() {
 	echo "${0##*/}: fatal: ${1}"
@@ -60,7 +61,7 @@ case "${COPT:-help}" in
 		export NEXT="true"
 
 		# check dependencies.
-		for c in "unzip" "curl" "uname" "rm" "mkdir" "cp"
+		for c in "unzip" "curl" "uname" "rm" "mkdir" "cp" "ln"
 		do
 			if ! command -vV "${c}"
 			then
@@ -111,9 +112,11 @@ case "${COPT:-help}" in
 				die "0: can't get the pre-release, are you connected to internet? is the machine name correct or architecture is true?" 
 			fi
 
-			unzip "/tmp/tmp.juleup/${PLATFORM}-${ARCH}v${RELEASE}.zip" -d "/tmp/tmp.juleup"
+			[ ! -d "/tmp/tmp.juleup/${RELEASE}" ] && mkdir "/tmp/tmp.juleup/${RELEASE}"
 
-			if [ ! -d "/tmp/tmp.juleup/jule" ]
+			unzip "/tmp/tmp.juleup/${PLATFORM}-${ARCH}v${RELEASE}.zip" -d "/tmp/tmp.juleup/${RELEASE}"
+
+			if [ ! -d "/tmp/tmp.juleup/${RELEASE}/jule" ]
 			then
 				die "1: can't get the pre-release, are you connected to internet? is the machine name correct or architecture is true?"
 			fi
@@ -125,10 +128,12 @@ case "${COPT:-help}" in
 			# check if exist's
 			if [ -d "${JULE_DIR}/julec/${PLATFORM}/julec-${ARCH}v${RELEASE}" ]
 			then
-				read -p "Do you want to replace the installation? (y/N)" opt
+				unset opt
+				printf "Do you want to replace the installation? (y/N)"
+				read -r opt
 				case "${opt}" in
 					[yY])
-						cp -r "/tmp/tmp.juleup/jule" "${JULE_DIR}/julec/${PLATFORM}/julec-${ARCH}v${RELEASE}"
+						cp -r "/tmp/tmp.juleup/${RELEASE}/jule" "${JULE_DIR}/julec/${PLATFORM}/julec-${ARCH}v${RELEASE}"
 						echo "recopied."
 					;;
 					*)
@@ -136,7 +141,7 @@ case "${COPT:-help}" in
 					;;
 				esac
 			else
-				cp -r "/tmp/tmp.juleup/jule" "${JULE_DIR}/julec/${PLATFORM}/julec-${ARCH}v${RELEASE}"
+				cp -r "/tmp/tmp.juleup/${RELEASE}/jule" "${JULE_DIR}/julec/${PLATFORM}/julec-${ARCH}v${RELEASE}"
 			fi
 
 			# This field forheck required current release of Jule compiler files.
@@ -158,7 +163,51 @@ case "${COPT:-help}" in
 			# Compile self hosted compiler.
 			if "${NEXT:-false}"
 			then
-				:
+				if [ -f "${JCD}/bin/julec_dev" ]
+				then
+					unset opt
+					printf "It seems to be like the Jule Compiler already exists, do you want to recompile it? (y/N)"
+					read -r opt
+					case "${opt}" in
+						[yY])
+							echo "recompiling JuleC v${RELEASE}."
+							"${JCD}/bin/julec" --opt-deadcode -o "${JCD}/bin/julec_dev" "${JCD}/src/julec"	
+							echo "julec v${RELEASE} is recompiled for ${PLATFORM}-${ARCH}."
+						;;
+						*)
+							echo "julec v${RELEASE} is ready for ${PLATFORM}-${ARCH}."
+						;;
+					esac
+				else
+					echo "compiling julec v${RELEASE}.."
+					"${JCD}/bin/julec" --opt-deadcode -o "${JCD}/bin/julec_dev" "${JCD}/src/julec"
+					echo "julec v${RELEASE} is compiled for ${PLATFORM}-${ARCH}."
+				fi
+
+				# So close, set up if default compiler never exists.
+				if [ ! -f "${JULE_DIR}/default" ]
+				then
+					printf "RELEASE=\"%s\"\nPLATFORM=\"%s\"\nARCH=\"%s\"\n" "${RELEASE}" "${PLATFORM}" "${ARCH}" > "${JULE_DIR}/default"
+					[ ! -d "${JULE_DIR}/bin" ] && mkdir "${JULE_DIR}/bin"
+					[ -f "${JULE_DIR}/bin/julec" ] && rm -rf "${JULE_DIR}/bin/julec"
+					ln -s "${JCD}/bin/julec_dev" "${JULE_DIR}/bin/julec"
+					echo "now JuleC v${RELEASE} is the default compiler."
+				fi
+
+				# Last thing check the path for jule's bin dir.
+				case ":${PATH}:" in
+				  *":${JULE_DIR}/bin:"*) 
+					echo "already added to path."
+				  ;;
+				  *)
+					case "${SHELL##*/}" in
+						"bash")
+							echo "PATH=\"\${PATH}:${JULE_DIR}/bin\"" >> "${HOME}/.bashrc"
+							echo "added to path, please source again your .bashrc file or start new bash session."
+						;;
+					esac
+				  ;;
+				esac
 			else
 				die "your installation goes wrong, please open an issue: https://github.com/lazypwny751/juleup/issues/new"
 			fi
