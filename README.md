@@ -38,7 +38,7 @@ sudo mv juleup.sh /usr/local/bin/juleup
 ## 🚀 Usage
 
 ```sh
-sh juleup.sh <command> [options]
+sh juleup.sh [options] <command>
 ```
 
 ### Commands
@@ -97,8 +97,8 @@ sh juleup.sh -h
 ## ⚠️ Requirements
 
 - POSIX-compliant shell (`sh`, `dash`, `bash`, etc.)
-- `curl` or `wget` for downloading
-- `tar` or `unzip` for extracting archives
+- `curl` for downloading
+- `unzip` for extracting archives
 
 # Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
