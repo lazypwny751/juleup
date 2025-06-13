@@ -1,4 +1,4 @@
-name: juleup CI
+name: Build juleup
 
 on:
   push:
