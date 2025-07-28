@@ -45,7 +45,7 @@ do
 	esac
 done
 
-export JULE_DIR="${JULE_DIR:-${HOME}/.local/share/julelang}" RELEASE="${RELEASE:-0.1.5}" CLEAN="${CLEAN:-false}"
+export JULE_DIR="${JULE_DIR:-${HOME}/.local/share/julelang}" RELEASE="${RELEASE:-0.1.6}" CLEAN="${CLEAN:-false}"
 
 shift $((OPTIND - 1))
 if [ "${#}" -gt 0 ]

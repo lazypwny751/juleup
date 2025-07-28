@@ -59,7 +59,7 @@ sh juleup.sh [options] <command>
 | `-a`   | `<arch>`     | Architecture (e.g. `x86_64`, `aarch64`)     |
 | `-p`   | `<platform>` | Platform (e.g. `linux`, `windows`, `macos`) |
 | `-d`   | `<dir>`      | Installation directory                      |
-| `-r`   | `<release>`  | Release version (e.g. `0.1.4`, `0.1.5`)  |
+| `-r`   | `<release>`  | Release version (e.g. `0.1.5`, `0.1.6`)  |
 | `-c`   |              | Clean setup — removes existing installation |
 | `-v`   |              | Enable verbose output                        |
 | `-h`   |              | Show this help message                      |
@@ -71,13 +71,13 @@ sh juleup.sh [options] <command>
 Install the latest stable Jule toolchain for Linux/x86_64:
 
 ```sh
-sh juleup.sh -a x86_64 -p linux -r "0.1.5" get
+sh juleup.sh -a x86_64 -p linux -r "0.1.6" get
 ```
 
 Set a previously installed toolchain as the default:
 
 ```sh
-sh juleup.sh -a x86_64 -p linux -r "0.1.5" set
+sh juleup.sh -a x86_64 -p linux -r "0.1.6" set
 ```
 
 List installed toolchains:
