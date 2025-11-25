@@ -1,41 +1,31 @@
 # juleup
 
-> An elegant, POSIX-compliant toolchain installer for the [Jule programming language](https://jule.dev)
+> [!WARNING]
+> This project is being rewritten in its native language (Jule) on the [`dev`](https://github.com/lazypwny751/juleup/tree/dev) branch.
 
-`juleup` is a minimal, POSIX-compliant shell script that simplifies the installation, management, and configuration of Jule compilers across platforms and architectures.
+A POSIX-compliant toolchain installer for the Jule programming language.
 
----
+juleup is a shell script that helps you install, manage, and configure Jule compilers. It supports different platforms and architectures.
 
-## 🛠 Features
+## Installation
 
-- ✅ POSIX-compliant shell interface  
-- 🎯 Target-specific installs (platform, arch, release)  
-- 🧼 Clean setup support  
-- 🔧 Default compiler switching  
-- 🔍 Verbose debug output  
-- 📦 List and fetch multiple compiler versions  
-
----
-
-## 📦 Installation
-
-Clone this repository and make the script executable:
+Clone the repository and make the script executable:
 
 ```sh
 git clone https://github.com/lazypwny751/juleup.git
 cd juleup
-chmod u+x juleup.sh
+chmod +x juleup.sh
 ```
 
-(Optionally move it to your `$PATH` for global usage:)
+You can also move it to your path:
 
 ```sh
 sudo mv juleup.sh /usr/local/bin/juleup
 ```
 
----
+## Usage
 
-## 🚀 Usage
+Run the script with a command and optional flags:
 
 ```sh
 sh juleup.sh [options] <command>
@@ -43,41 +33,33 @@ sh juleup.sh [options] <command>
 
 ### Commands
 
-| Command   | Description                                           |
-|-----------|-------------------------------------------------------|
-| `version` | Show the current juleup version                       |
-| `list`    | List installed Jule toolchains                        |
-| `get`     | Fetch and configure a toolchain (-a, -p, -r optional) |
-| `set`     | Set default toolchain (-a, -p, -r optional)           |
-
----
+- `version`: Show the current version.
+- `list`: List installed toolchains.
+- `get`: Download and configure a toolchain.
+- `set`: Set the default toolchain.
 
 ### Options
 
-| Option | Argument     | Description                                 |
-|--------|--------------|---------------------------------------------|
-| `-a`   | `<arch>`     | Architecture (e.g. `x86_64`, `aarch64`)     |
-| `-p`   | `<platform>` | Platform (e.g. `linux`, `windows`, `macos`) |
-| `-d`   | `<dir>`      | Installation directory                      |
-| `-r`   | `<release>`  | Release version (e.g. `0.1.5`, `0.1.6`)  |
-| `-c`   |              | Clean setup — removes existing installation |
-| `-v`   |              | Enable verbose output                        |
-| `-h`   |              | Show this help message                      |
+- `-a <arch>`: Architecture (e.g. `amd64`, `arm64`).
+- `-p <platform>`: Platform (e.g. `linux`).
+- `-d <dir>`: Installation directory.
+- `-r <release>`: Release version (e.g. `0.1.6`).
+- `-c`: Clean setup (removes existing installation).
+- `-v`: Enable verbose output.
+- `-h`: Show help message.
 
----
+## Examples
 
-## 🧪 Examples
-
-Install the latest stable Jule toolchain for Linux/x86_64:
+Install the latest Jule toolchain for Linux/amd64:
 
 ```sh
-sh juleup.sh -a x86_64 -p linux -r "0.1.6" get
+sh juleup.sh -a amd64 -p linux -r "0.1.6" get
 ```
 
-Set a previously installed toolchain as the default:
+Set a specific toolchain as default:
 
 ```sh
-sh juleup.sh -a x86_64 -p linux -r "0.1.6" set
+sh juleup.sh -a amd64 -p linux -r "0.1.6" set
 ```
 
 List installed toolchains:
@@ -86,23 +68,17 @@ List installed toolchains:
 sh juleup.sh list
 ```
 
-Get help:
+## Requirements
 
-```sh
-sh juleup.sh -h
-```
+- A POSIX-compliant shell (`sh`, `bash`, etc.)
+- `curl`
+- `unzip`
 
----
+## Contributing
 
-## ⚠️ Requirements
-
-- POSIX-compliant shell (`sh`, `dash`, `bash`, etc.)
-- `curl` for downloading
-- `unzip` for extracting archives
-
-# Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 Please ensure your changes stay POSIX-compliant and shell-portable.
 
-# License
-[GPL3](https://choosealicense.com/licenses/gpl-3.0/)
+## License
+
+Distributed under the [GPL3 License](https://choosealicense.com/licenses/gpl-3.0/).
